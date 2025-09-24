@@ -145,3 +145,21 @@
     min-width: 0;
   }
 }
+
+.transcription-pending {
+  color: #666;
+  font-style: italic;
+}
+
+.loading-indicator {
+  display: inline-block;
+  animation: pulse 1.5s ease-in-out infinite;
+  margin-right: 8px;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
