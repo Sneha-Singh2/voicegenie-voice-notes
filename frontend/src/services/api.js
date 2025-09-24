@@ -13,7 +13,7 @@ const api = axios.create({
 export const createVoiceNote = (audioData) => {
   return api.post('/api/voice-notes', audioData, {
     headers: {
-      'Content-Type': 'application/json',  // JSON, not multipart
+      'Content-Type': 'application/json',  
     },
   });
 };
