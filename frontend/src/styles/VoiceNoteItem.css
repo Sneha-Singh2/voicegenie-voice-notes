@@ -1,0 +1,147 @@
+.voice-note-item {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+}
+
+.voice-note-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  color: #718096;
+  font-size: 14px;
+}
+
+.note-date {
+  font-weight: 500;
+}
+
+.note-duration {
+  background: #edf2f7;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-family: monospace;
+}
+
+.note-content {
+  margin-bottom: 16px;
+}
+
+.transcript {
+  color: #2d3748;
+  line-height: 1.6;
+  font-size: 16px;
+  margin: 0;
+}
+
+.edit-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.edit-textarea:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.summary-section {
+  background: #f7fafc;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border-left: 4px solid #4299e1;
+}
+
+.summary-section h4 {
+  color: #2d3748;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-text {
+  color: #4a5568;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.note-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.edit-btn, .delete-btn, .summary-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-btn {
+  background: #edf2f7;
+  color: #4a5568;
+}
+
+.edit-btn:hover {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+.delete-btn {
+  background: #fed7d7;
+  color: #c53030;
+}
+
+.delete-btn:hover {
+  background: #feb2b2;
+  color: #9b2c2c;
+}
+
+.summary-btn {
+  background: #2c5aa0;
+  color: white;
+}
+
+.summary-btn:hover:not(:disabled) {
+  background: #2a4d8d;
+}
+
+.summary-btn:disabled {
+  background: #a0aec0;
+  color: #718096;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .note-actions {
+    justify-content: space-between;
+  }
+  
+  .edit-btn, .delete-btn, .summary-btn {
+    flex: 1;
+    min-width: 0;
+  }
+}
