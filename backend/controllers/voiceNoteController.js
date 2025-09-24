@@ -1,8 +1,4 @@
 const VoiceNote = require('../models/VoiceNote');
-const genAI = require('../config/gemini');
-const { GoogleAIFileManager } = require('@google/generative-ai/server');
-const fs = require('fs');
-const path = require('path');
 
 const createVoiceNote = async (req, res) => {
   try {
@@ -17,7 +13,7 @@ const createVoiceNote = async (req, res) => {
       
       const voiceNote = new VoiceNote({
         audioUrl: `data:audio/webm;base64,${req.body.audioData}`,
-        transcript: 'Audio transcription will be processed', // Valid transcript
+        transcript: 'Audio transcription will be processed',
         duration: req.body.duration || 0,
         title: `Voice Note - ${new Date().toLocaleString()}`
       });
@@ -67,6 +63,89 @@ const createVoiceNote = async (req, res) => {
   }
 };
 
+const getAllVoiceNotes = async (req, res) => {
+  try {
+    console.log('Fetching all voice notes...');
+    const voiceNotes = await VoiceNote.find()
+      .sort({ createdAt: -1 })
+      .select('title transcript summary audioUrl duration hasSummary isEdited createdAt updatedAt');
+    
+    console.log(`Found ${voiceNotes.length} voice notes`);
+    
+    res.json({
+      success: true,
+      count: voiceNotes.length,
+      data: voiceNotes
+    });
+  } catch (error) {
+    console.error('Get voice notes error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch voice notes',
+      details: error.message 
+    });
+  }
+};
+
+const updateVoiceNote = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { transcript, title } = req.body;
+
+    const voiceNote = await VoiceNote.findById(id);
+    if (!voiceNote) {
+      return res.status(404).json({ error: 'Voice note not found' });
+    }
+
+    if (transcript !== undefined) {
+      voiceNote.transcript = transcript;
+      voiceNote.isEdited = true;
+    }
+    
+    if (title !== undefined) {
+      voiceNote.title = title;
+    }
+
+    await voiceNote.save();
+
+    res.json({
+      success: true,
+      data: voiceNote,
+      message: 'Voice note updated successfully!'
+    });
+
+  } catch (error) {
+    console.error('Update voice note error:', error);
+    res.status(500).json({ 
+      error: 'Failed to update voice note',
+      details: error.message 
+    });
+  }
+};
+
+const deleteVoiceNote = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const voiceNote = await VoiceNote.findById(id);
+    if (!voiceNote) {
+      return res.status(404).json({ error: 'Voice note not found' });
+    }
+
+    await VoiceNote.findByIdAndDelete(id);
+
+    res.json({
+      success: true,
+      message: 'Voice note deleted successfully!'
+    });
+
+  } catch (error) {
+    console.error('Delete voice note error:', error);
+    res.status(500).json({ 
+      error: 'Failed to delete voice note',
+      details: error.message 
+    });
+  }
+};
 
 module.exports = {
   createVoiceNote,
