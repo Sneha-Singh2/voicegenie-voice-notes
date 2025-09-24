@@ -6,21 +6,33 @@ const path = require('path');
 
 const createVoiceNote = async (req, res) => {
   try {
-    
-    let audioData;
-    let filename;
-    
+    // Handle both file upload and base64 audio data
     if (req.file) {
-     
-      audioData = req.file;
-      filename = req.file.filename;
+      // File upload case - keep your original file upload logic here
+      console.log('Uploaded file:', req.file);
+      
+      // For now, create a simple voice note for file uploads
+      const voiceNote = new VoiceNote({
+        audioUrl: `/uploads/${req.file.filename}`,
+        transcript: 'Transcription will be added here',
+        duration: 0,
+        title: `Voice Note - ${new Date().toLocaleString()}`
+      });
+
+      await voiceNote.save();
+      
+      return res.status(201).json({
+        success: true,
+        data: voiceNote,
+        message: 'Voice note created successfully!'
+      });
+      
     } else if (req.body.audioData) {
-     
+      // Base64 audio data case (used by your frontend)
       console.log('Received base64 audio data, length:', req.body.audioData.length);
       
-     
       const voiceNote = new VoiceNote({
-        audioUrl: `data:audio/webm;base64,${req.body.audioData}`, 
+        audioUrl: `data:audio/webm;base64,${req.body.audioData}`,
         transcript: 'Transcription will be added here',
         duration: req.body.duration || 0,
         title: `Voice Note - ${new Date().toLocaleString()}`
@@ -33,14 +45,13 @@ const createVoiceNote = async (req, res) => {
         data: voiceNote,
         message: 'Voice note created successfully!'
       });
+      
     } else {
       return res.status(400).json({ 
         error: 'No audio data provided',
         details: 'Either upload a file or provide audioData in request body'
       });
     }
-
- 
     
   } catch (error) {
     console.error('Voice note creation error:', error);
@@ -50,6 +61,7 @@ const createVoiceNote = async (req, res) => {
     });
   }
 };
+
 
 
 module.exports = {
