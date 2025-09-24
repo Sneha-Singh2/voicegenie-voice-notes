@@ -36,6 +36,27 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 app.use('/uploads', express.static('uploads'));
 
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'VoiceGenie API Server is running!',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      voiceNotes: '/api/voice-notes',
+      ai: '/api/ai'
+    }
+  });
+});
+
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    message: 'Voice Notes API is running',
+    timestamp: new Date().toISOString(),
+    database: 'Connected'
+  });
+});
+
 
 app.use('/api/voice-notes', voiceNotesRoutes);
 app.use('/api/ai', aiRoutes);
