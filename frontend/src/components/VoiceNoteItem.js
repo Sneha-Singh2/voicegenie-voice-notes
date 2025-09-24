@@ -10,15 +10,15 @@ const VoiceNoteItem = ({ note, onUpdate, onDelete }) => {
   const [hasGeneratedSummary, setHasGeneratedSummary] = useState(Boolean(note.summary));
   const [summaryCleared, setSummaryCleared] = useState(false);
   const [currentTranscript, setCurrentTranscript] = useState(note.transcript);
+  const [originalTranscript, setOriginalTranscript] = useState(note.transcript); // Track original transcript
 
   // Auto-refresh for transcription updates
   useEffect(() => {
     if (note.transcript === 'Transcribing audio...' || note.transcript === 'Processing transcription...') {
       const interval = setInterval(() => {
         onUpdate(); // This will refresh the note data
-      }, 3000); // Check every 3 seconds
+      }, 3000);
 
-      // Clear interval after 30 seconds to avoid infinite polling
       const timeout = setTimeout(() => {
         clearInterval(interval);
       }, 30000);
@@ -30,27 +30,42 @@ const VoiceNoteItem = ({ note, onUpdate, onDelete }) => {
     }
   }, [note.transcript, onUpdate]);
 
+  // Update states when note changes
   useEffect(() => {
     setEditedTranscript(note.transcript);
     setCurrentTranscript(note.transcript);
-  }, [note.transcript, note._id]);
+    setOriginalTranscript(note.transcript);
+    setLocalSummary(note.summary || '');
+    setHasGeneratedSummary(Boolean(note.summary));
+    setSummaryCleared(false);
+  }, [note._id, note.transcript, note.summary]);
 
   const handleEdit = async () => {
     if (isEditing) {
       try {
-        const transcriptChanged = editedTranscript !== note.transcript;
+        const transcriptChanged = editedTranscript !== originalTranscript;
         
         await updateVoiceNote(note._id, { transcript: editedTranscript });
         
         if (transcriptChanged) {
+          // Clear summary and reset generate button when transcript is edited
           setLocalSummary('');
           setSummaryCleared(true);
           setHasGeneratedSummary(false);
+          
+          // Update the note's summary on the backend to clear it
+          await updateVoiceNote(note._id, { 
+            transcript: editedTranscript,
+            summary: null, // Clear the summary
+            hasSummary: false // Reset summary flag
+          });
         }
         
         setCurrentTranscript(editedTranscript);
+        setOriginalTranscript(editedTranscript); // Update original transcript
         setIsEditing(false);
         onUpdate(); // Refresh the list
+        
       } catch (error) {
         console.error('Error updating note:', error);
       }
@@ -94,6 +109,9 @@ const VoiceNoteItem = ({ note, onUpdate, onDelete }) => {
   const isTranscriptionPending = currentTranscript === 'Transcribing audio...' || 
                                  currentTranscript === 'Processing transcription...';
 
+  // Check if transcript has been changed from original
+  const hasTranscriptChanged = editedTranscript !== originalTranscript;
+
   return (
     <div className="voice-note-item">
       <div className="note-header">
@@ -127,7 +145,7 @@ const VoiceNoteItem = ({ note, onUpdate, onDelete }) => {
         )}
       </div>
 
-      {!summaryCleared && (localSummary || note.summary) && (
+      {!summaryCleared && (localSummary || note.summary) && !hasTranscriptChanged && (
         <div className="summary-section">
           <h4>Summary:</h4>
           <p className="summary-text">{localSummary || note.summary}</p>
@@ -143,7 +161,11 @@ const VoiceNoteItem = ({ note, onUpdate, onDelete }) => {
         </button>
         <button
           onClick={handleGenerateSummary}
-          disabled={isGeneratingSummary || hasGeneratedSummary || isTranscriptionPending}
+          disabled={
+            isGeneratingSummary || 
+            isTranscriptionPending || 
+            (hasGeneratedSummary && !hasTranscriptChanged && !summaryCleared)
+          }
           className="summary-btn"
         >
           {isGeneratingSummary ? 'Generating...' : 'Generate Summary'}

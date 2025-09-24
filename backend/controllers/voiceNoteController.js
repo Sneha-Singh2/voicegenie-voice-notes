@@ -125,7 +125,7 @@ const getAllVoiceNotes = async (req, res) => {
 const updateVoiceNote = async (req, res) => {
   try {
     const { id } = req.params;
-    const { transcript, title } = req.body;
+    const { transcript, title, summary, hasSummary } = req.body;
 
     const voiceNote = await VoiceNote.findById(id);
     if (!voiceNote) {
@@ -139,6 +139,15 @@ const updateVoiceNote = async (req, res) => {
     
     if (title !== undefined) {
       voiceNote.title = title;
+    }
+
+    // Handle summary clearing
+    if (summary !== undefined) {
+      voiceNote.summary = summary;
+    }
+
+    if (hasSummary !== undefined) {
+      voiceNote.hasSummary = hasSummary;
     }
 
     await voiceNote.save();
@@ -157,6 +166,7 @@ const updateVoiceNote = async (req, res) => {
     });
   }
 };
+
 
 const deleteVoiceNote = async (req, res) => {
   try {
