@@ -26,14 +26,25 @@ const VoiceRecorder = ({ onNoteCreated }) => {
 
   setIsUploading(true);
   try {
-    const formData = new FormData();
-    formData.append('audio', recordedBlob, 'recording.webm');
-    formData.append('duration', recordingTime);
+   
+    const base64Audio = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result.split(',')[1]; 
+        resolve(base64);
+      };
+      reader.readAsDataURL(recordedBlob);
+    });
+
+   
+    const audioData = {
+      audioData: base64Audio,
+      duration: recordingTime
+    };
 
     console.log(' Saving voice note...');
-    const response = await createVoiceNote(formData);
+    const response = await createVoiceNote(audioData);
     console.log(' Save response:', response);
-    
     
     resetRecording();
     onNoteCreated();
@@ -46,6 +57,7 @@ const VoiceRecorder = ({ onNoteCreated }) => {
     setIsUploading(false);
   }
 };
+
 
 
   return (

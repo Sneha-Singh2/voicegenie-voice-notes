@@ -10,13 +10,14 @@ const api = axios.create({
   },
 });
 
-export const createVoiceNote = (formData) => {
-  return api.post('/api/voice-notes', formData, {
+export const createVoiceNote = (audioData) => {
+  return api.post('/api/voice-notes', audioData, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      'Content-Type': 'application/json',  // JSON, not multipart
     },
   });
 };
+
 
 export const getAllVoiceNotes = () => {
   return api.get('/api/voice-notes');
