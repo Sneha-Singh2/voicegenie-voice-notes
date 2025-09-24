@@ -6,30 +6,15 @@ const path = require('path');
 
 const createVoiceNote = async (req, res) => {
   try {
-    // Handle both file upload and base64 audio data
-    if (req.file) {
-      // File upload case - keep your original file upload logic here
-      console.log('Uploaded file:', req.file);
-      
-      // For now, create a simple voice note for file uploads
-      const voiceNote = new VoiceNote({
-        audioUrl: `/uploads/${req.file.filename}`,
-        transcript: 'Transcription will be added here',
-        duration: 0,
-        title: `Voice Note - ${new Date().toLocaleString()}`
-      });
+    console.log('Request received:', {
+      hasFile: !!req.file,
+      hasAudioData: !!req.body.audioData,
+      bodyKeys: Object.keys(req.body)
+    });
 
-      await voiceNote.save();
-      
-      return res.status(201).json({
-        success: true,
-        data: voiceNote,
-        message: 'Voice note created successfully!'
-      });
-      
-    } else if (req.body.audioData) {
+    if (req.body.audioData) {
       // Base64 audio data case (used by your frontend)
-      console.log('Received base64 audio data, length:', req.body.audioData.length);
+      console.log('Processing base64 audio data, length:', req.body.audioData.length);
       
       const voiceNote = new VoiceNote({
         audioUrl: `data:audio/webm;base64,${req.body.audioData}`,
@@ -39,6 +24,27 @@ const createVoiceNote = async (req, res) => {
       });
 
       await voiceNote.save();
+      console.log('Voice note saved:', voiceNote._id);
+      
+      return res.status(201).json({
+        success: true,
+        data: voiceNote,
+        message: 'Voice note created successfully!'
+      });
+      
+    } else if (req.file) {
+      // File upload case
+      console.log('Processing uploaded file:', req.file.originalname);
+      
+      const voiceNote = new VoiceNote({
+        audioUrl: `/uploads/${req.file.filename}`,
+        transcript: 'Transcription will be added here',
+        duration: 0,
+        title: `Voice Note - ${new Date().toLocaleString()}`
+      });
+
+      await voiceNote.save();
+      console.log('Voice note saved:', voiceNote._id);
       
       return res.status(201).json({
         success: true,
@@ -47,6 +53,7 @@ const createVoiceNote = async (req, res) => {
       });
       
     } else {
+      console.log('No audio data provided');
       return res.status(400).json({ 
         error: 'No audio data provided',
         details: 'Either upload a file or provide audioData in request body'
@@ -61,6 +68,7 @@ const createVoiceNote = async (req, res) => {
     });
   }
 };
+
 
 
 
