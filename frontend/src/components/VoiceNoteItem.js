@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { updateVoiceNote, deleteVoiceNote, generateSummary } from '../services/api';
+import { updateVoiceNote, generateSummary } from '../services/api';
 import '../styles/VoiceNoteItem.css';
 
 const VoiceNoteItem = ({ note, onUpdate, onDelete }) => {
