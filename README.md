@@ -12,10 +12,10 @@
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB Atlas
 - **AI:** Google Gemini API
-- **Deployment:** Netlify (Frontend)
+- **Deployment:** Netlify (Frontend) Render (Backend)
 
 ## 🚀 Live Demo
-[Live App](https://your-app-name.netlify.app)
+[Try VoiceGenie Live](https://voicegenie-voice-notes.netlify.app)
 
 ## 🎯 Installation
 1. Clone repository
@@ -23,4 +23,4 @@
 3. Start development: `npm start`
 
 ## 👩‍💻 Developer
-**Sneha Singh** - Full Stack Developer
+**Sneha Singh** - Mern Stack Developer
