@@ -16,6 +16,7 @@
 
 ## 🚀 Live Demo
 [Try VoiceGenie Live](https://voicegenie-voice-notes.netlify.app)
+(NOTE: Please allow a few seconds for the Voice Notes section to load when you first open the live app. This short delay is normal due to the AI processing involved in loading voice notes and should only happen during initial loading. Thank you for your patience!)
 
 ## 🎯 Installation
 1. Clone repository
